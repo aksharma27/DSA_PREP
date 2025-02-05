@@ -1,38 +1,40 @@
 package DP;
 
+import javax.sound.midi.Soundbank;
 import java.util.Scanner;
 
 public class GoogleOaODDJOURNEY {
 //    Find the number of journeys where you start from index 1 and end at index ‘n’ and the sum of every journey should be odd..
 public static void main(String[] args) {
-    Scanner in = new Scanner(System.in);
-    int n = in.nextInt();
-    int[] a = new int[n+1];
-    for (int i = 1; i <= n; i++) {
-        a[i] = in.nextInt();
-    }
-    int[][] dp = new int[100005][3];
+   int[] ar = {0, 2, 3, 5, 8, 10};
+    System.out.println(countOddJourneys(ar));
 
-    //if a[i] % 2 == 0 ==> even ==> odd journey = curr(even) + odd journeys(i-1, i-2), oppsite for odd
-    if (a[1] % 2 == 0) dp[1][2] = 1;
-    else dp[1][1] = 1;
-
-    int  i = 2;
-    while (i <= n) {
-        if (a[i] % 2 == 0) {    // curr is even
-            //even journeys = even + even
-            dp[i][2] = dp[i-2][2] + dp[i-1][2];
-//            odd = even + odd
-            dp[i][1] = dp[i-2][1] + dp[i-1][1];
-        } else {    //curr is odd
-            //even journeys = odd + odd
-            dp[i][2] = dp[i-2][1] + dp[i-1][1];
-
-            // odd journeys = odd + even
-            dp[i][1] = dp[i-1][2] + dp[i-2][2];
-        }
-        i++;
-    }
-    System.out.println("Even journeys : " + dp[n][2] + ", Odd Journeys : " + dp[n][1]);
 }
+
+    public static int countOddJourneys(int[] arr) {
+        int[][] dp = new int[arr.length + 1][arr.length + 1];
+        if (arr[1] % 2 == 0) {      //even
+            dp[1][0] = 1;       //even + even = even
+            dp[1][1] = 0;       //even + odd = odd
+        } else {
+            dp[1][0] = 0;       //odd + even = odd
+            dp[1][1] = 1;       //odd + odd = even
+        }
+
+        int i = 2;
+        while (i < arr.length)
+        {
+            if (arr[i] % 2 != 0) {
+                // curr is odd :
+                dp[i][1] = dp[i - 1][0] + dp[i -2][0];
+                dp[i][0] = dp[i - 1][1] + dp[i - 2][1];
+            } else {
+                //curr is even :
+                dp[i][1] = dp[i - 1][1] + dp[i - 2][1];
+                dp[i][0] = dp[i - 1][0] + dp[i - 2][0];
+            }
+            i++;
+        }
+        return dp[arr.length - 1][1];
+    }
 }
